@@ -388,12 +388,13 @@ input::placeholder, textarea::placeholder {
 /* ── Instructions ── */
 .eval-instructions {
   text-align: center;
-  padding: 14px 24px 0;
+  padding: 10px 24px;
   font-size: 0.84rem;
   color: var(--muted);
   max-width: 800px;
   margin: 0 auto;
-  line-height: 1.6;
+  line-height: 1.5;
+  border-bottom: 1px solid var(--hairline-soft);
 }
 
 /* ── Mobile tabs: Cal.com nav-pill-group ── */
@@ -894,17 +895,23 @@ input::placeholder, textarea::placeholder {
 
   /*
    * ROOT SCROLL FIX
-   * html/body height:100% + overflow:hidden stops page-level scroll.
-   * NO position:fixed on body — that caused screens to overlap and
-   * ID-selector display:flex overrode .screen{display:none}.
-   * Each .screen.active manages its own scroll context.
+   * 1. html/body: height 100% + overflow hidden
+   * 2. All screens: min-height:0 overrides desktop min-height:100vh
+   *    (critical — without this the eval screen is taller than viewport)
+   * 3. JS touchmove lock (app.js) handles iOS Safari which ignores
+   *    CSS overflow:hidden on body
    */
   html, body {
     height: 100%;
     overflow: hidden;
   }
 
-  /* All active screens fill the full viewport height */
+  /* Reset desktop min-height on all screens */
+  .screen {
+    min-height: 0;
+  }
+
+  /* Active screens fill viewport */
   .screen.active {
     height: 100%;
   }
@@ -974,12 +981,9 @@ input::placeholder, textarea::placeholder {
 
   .progress-bar-container { flex-shrink: 0; }
 
+  /* Hide instructions on mobile — UX is self-explanatory via tabs+vote buttons */
   .eval-instructions {
-    flex-shrink: 0;
-    font-size: 0.78rem;
-    padding: 8px 14px;
-    border-bottom: 1px solid var(--hairline-soft);
-    color: var(--muted-soft);
+    display: none;
   }
 
   /* ── Tabs: Cal nav-pill-group style ── */
