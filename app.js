@@ -90,6 +90,7 @@ function renderPair() {
       const btn = $(`vote-${existing.vote.toLowerCase()}`);
       if (btn) btn.classList.add('active');
       updatePanelSelection(existing.vote);
+      showFeedbackArea();
     }
     $('feedback').value = existing.feedback || '';
     $('btn-next').disabled = false;
@@ -119,6 +120,11 @@ function scrollDispatchTop() {
 function clearVoteUI() {
   document.querySelectorAll('.btn-vote').forEach(b => b.classList.remove('active'));
   document.querySelectorAll('.dispatch-panel').forEach(p => p.classList.remove('selected'));
+  $('feedback-area').classList.remove('visible');
+}
+
+function showFeedbackArea() {
+  $('feedback-area').classList.add('visible');
 }
 
 function updatePanelSelection(vote) {
@@ -374,6 +380,7 @@ async function init() {
       updatePanelSelection(vote);
       saveVote(vote);
       $('btn-next').disabled = false;
+      showFeedbackArea();
     });
   });
 
