@@ -1,17 +1,19 @@
 /* ============================================================
    Valutatore Dispatch — App Logic
-   Stores evaluations in localStorage, exports as JSON
    ============================================================ */
 
 const APP_KEY = 'scare_dispatch_evaluations';
+const ADMIN_KEY = 'scare_admin_aggregated'; // Per salvare dati aggregati importati
 
 // ---- State ----
 let state = {
   user: '',
   currentIndex: 0,
   pairs: [],
-  votes: {} // { pairId: { vote: 'A'|'B'|'equal', feedback: '' } }
+  votes: {} // { pairId: { vote: 'A'|'B', feedback: '' } }
 };
+
+let adminData = []; // array of evaluation exports
 
 // ---- DOM refs ----
 const $ = id => document.getElementById(id);
@@ -19,6 +21,7 @@ const screens = {
   login: $('screen-login'),
   eval: $('screen-eval'),
   results: $('screen-results'),
+  admin: $('screen-admin')
 };
 
 // ---- Simple Markdown → HTML ----
@@ -26,18 +29,13 @@ function mdToHtml(md) {
   if (!md) return '<p><em>Nessun contenuto disponibile</em></p>';
   
   let html = md
-    // Bold
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-    // Italic
     .replace(/\*(.+?)\*/g, '<em>$1</em>')
-    // Headers (keep h4+ visible)
     .replace(/^#### (.+)$/gm, '<h4>$1</h4>')
     .replace(/^### (.+)$/gm, '<h3>$1</h3>')
     .replace(/^## (.+)$/gm, '<h2>$1</h2>')
     .replace(/^# (.+)$/gm, '<h1>$1</h1>')
-    // Horizontal rules
     .replace(/^---$/gm, '<hr/>')
-    // Tables
     .replace(/^(\|.+\|)\n(\|[-| :]+\|)\n((?:\|.+\|\n?)+)/gm, (_, header, sep, body) => {
       const ths = header.split('|').filter(c => c.trim()).map(c => `<th>${c.trim()}</th>`).join('');
       const rows = body.trim().split('\n').map(row => {
@@ -46,10 +44,8 @@ function mdToHtml(md) {
       }).join('');
       return `<table><thead><tr>${ths}</tr></thead><tbody>${rows}</tbody></table>`;
     })
-    // INCONGRUENZA tags → styled
     .replace(/\[INCONGRUENZA:\s*(.*?)\s*(?:—\s*Richiede verifica\.)?\s*\]/g,
       '<span class="incongruenza">⚠ INCONGRUENZA: $1</span>')
-    // Line breaks → paragraphs
     .split('\n\n').map(block => {
       block = block.trim();
       if (!block) return '';
@@ -84,27 +80,16 @@ function renderPair() {
   const pair = state.pairs[state.currentIndex];
   if (!pair) return;
 
-  // Update header
   $('progress-text').textContent = `${state.currentIndex + 1} / ${state.pairs.length}`;
   const pct = ((state.currentIndex) / state.pairs.length) * 100;
   $('progress-bar').style.width = `${pct}%`;
 
-  // Patient info
   $('patient-id').textContent = pair.id;
   $('patient-info').textContent = pair.patient_info || '';
 
-  // Render dispatch content
   $('content-a').innerHTML = mdToHtml(pair.version_a.content);
   $('content-b').innerHTML = mdToHtml(pair.version_b.content);
 
-  // Add incongruenza styling
-  document.querySelectorAll('.incongruenza').forEach(el => {
-    el.style.cssText = 'display:block;margin:8px 0;padding:8px 12px;' +
-      'border-left:3px solid #ef4444;background:rgba(239,68,68,0.08);' +
-      'color:#fca5a5;font-size:0.78rem;font-weight:600;border-radius:0 6px 6px 0;';
-  });
-
-  // Restore vote state
   const existing = state.votes[pair.id];
   clearVoteUI();
   if (existing) {
@@ -120,18 +105,13 @@ function renderPair() {
     $('btn-next').disabled = true;
   }
 
-  // Nav buttons
   $('btn-prev').disabled = state.currentIndex === 0;
   const isLast = state.currentIndex === state.pairs.length - 1;
-  $('btn-next').querySelector('svg + svg, span')
   $('btn-next').innerHTML = isLast
     ? 'Termina <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>'
     : 'Prossimo <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
 
-  // Mobile: show panel A by default
   showMobileTab('a');
-
-  // Scroll top
   window.scrollTo(0, 0);
 }
 
@@ -190,27 +170,24 @@ function showResults() {
   const tbody = $('results-tbody');
   tbody.innerHTML = '';
 
-  let countA = 0, countB = 0, countEq = 0;
+  let countA = 0, countB = 0;
   state.pairs.forEach(pair => {
     const v = state.votes[pair.id];
     const tr = document.createElement('tr');
-    const voteLabel = v ? (v.vote === 'A' ? 'Versione A' : v.vote === 'B' ? 'Versione B' : 'Equivalenti') : '—';
+    const voteLabel = v ? (v.vote === 'A' ? 'Versione A' : 'Versione B') : '—';
     if (v) {
       if (v.vote === 'A') countA++;
       else if (v.vote === 'B') countB++;
-      else countEq++;
     }
     tr.innerHTML = `
       <td>${pair.id}</td>
-      <td style="color: ${v?.vote === 'A' ? '#6366f1' : v?.vote === 'B' ? '#f97316' : '#10b981'}">${voteLabel}</td>
+      <td style="color: ${v?.vote === 'A' ? 'var(--label-a)' : 'var(--label-b)'}">${voteLabel}</td>
       <td style="color: var(--text-muted); font-size: 0.8rem;">${v?.feedback || '—'}</td>
     `;
     tbody.appendChild(tr);
   });
 
-  $('results-summary').textContent =
-    `Versione A preferita: ${countA} — Versione B preferita: ${countB} — Equivalenti: ${countEq}`;
-
+  $('results-summary').textContent = `Versione A: ${countA} — Versione B: ${countB}`;
   showScreen('results');
 }
 
@@ -239,13 +216,118 @@ function exportResults() {
   URL.revokeObjectURL(url);
 }
 
+// ---- Admin Dashboard ----
+function loadAdminData() {
+  const raw = localStorage.getItem(ADMIN_KEY);
+  if (raw) {
+    try { adminData = JSON.parse(raw); } catch(e) { adminData = []; }
+  } else {
+    adminData = [];
+  }
+}
+
+function saveAdminData() {
+  localStorage.setItem(ADMIN_KEY, JSON.stringify(adminData));
+}
+
+function renderAdmin() {
+  let evaluators = new Set();
+  let totalVotes = 0;
+  let prefA = 0;
+  let prefB = 0;
+  
+  let patientStats = {}; // { id: { A: 0, B: 0 } }
+  let allEvals = [];
+
+  // Parse all imported data
+  adminData.forEach(file => {
+    evaluators.add(file.evaluator);
+    (file.evaluations || []).forEach(ev => {
+      if (!ev.preference) return;
+      totalVotes++;
+      
+      if (ev.preference === 'A') prefA++;
+      else if (ev.preference === 'B') prefB++;
+      
+      if (!patientStats[ev.patient_id]) patientStats[ev.patient_id] = { A: 0, B: 0 };
+      patientStats[ev.patient_id][ev.preference]++;
+      
+      allEvals.push({
+        evaluator: file.evaluator,
+        date: new Date(ev.evaluated_at || file.timestamp).toLocaleDateString(),
+        patient: ev.patient_id,
+        vote: ev.preference,
+        feedback: ev.feedback
+      });
+    });
+  });
+
+  $('stat-evaluators').textContent = evaluators.size;
+  $('stat-total-votes').textContent = totalVotes;
+  $('stat-pref-a').textContent = prefA;
+  $('stat-pref-b').textContent = prefB;
+
+  // Patient table
+  const pTbody = $('admin-patient-tbody');
+  pTbody.innerHTML = '';
+  Object.keys(patientStats).sort().forEach(pid => {
+    const s = patientStats[pid];
+    const total = s.A + s.B;
+    const pct = total > 0 ? Math.round((s.A / total) * 100) : 0;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><strong>${pid}</strong></td>
+      <td style="color:var(--label-a)">${s.A}</td>
+      <td style="color:var(--label-b)">${s.B}</td>
+      <td>${pct}%</td>
+    `;
+    pTbody.appendChild(tr);
+  });
+
+  // Evaluator table
+  const eTbody = $('admin-evaluator-tbody');
+  eTbody.innerHTML = '';
+  const fList = $('admin-feedback-list');
+  fList.innerHTML = '';
+
+  allEvals.forEach(ev => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${ev.evaluator}</td>
+      <td>${ev.date}</td>
+      <td>${ev.patient}</td>
+      <td style="color:${ev.vote === 'A' ? 'var(--label-a)' : 'var(--label-b)'}">Versione ${ev.vote}</td>
+      <td style="color:var(--text-muted);font-size:0.8rem">${ev.feedback ? 'Sì' : 'No'}</td>
+    `;
+    eTbody.appendChild(tr);
+
+    if (ev.feedback) {
+      const div = document.createElement('div');
+      div.className = 'feedback-item';
+      div.innerHTML = `
+        <div class="feedback-meta">
+          <span><strong>${ev.evaluator}</strong> su ${ev.patient}</span>
+          <span style="color:${ev.vote === 'A' ? 'var(--label-a)' : 'var(--label-b)'}">Voto: ${ev.vote}</span>
+        </div>
+        <div class="feedback-text">${ev.feedback}</div>
+      `;
+      fList.appendChild(div);
+    }
+  });
+  
+  if (fList.innerHTML === '') fList.innerHTML = '<p style="color:var(--text-muted);font-size:0.85rem;">Nessun feedback presente.</p>';
+}
+
 // ---- Init ----
 async function init() {
   await loadDispatches();
   loadState();
 
-  // If user already logged in and dispatches loaded, resume
-  if (state.user && state.pairs.length > 0) {
+  if (state.user === '@@@admin') {
+    loadAdminData();
+    showScreen('admin');
+    renderAdmin();
+  } else if (state.user && state.pairs.length > 0) {
     $('header-user').textContent = state.user;
     showScreen('eval');
     renderPair();
@@ -256,16 +338,25 @@ async function init() {
   // Login
   $('login-form').addEventListener('submit', e => {
     e.preventDefault();
-    state.user = $('username').value.trim();
-    if (!state.user) return;
-    $('header-user').textContent = state.user;
+    let val = $('username').value.trim();
+    if (!val) val = "Anonimo";
+    
+    state.user = val;
     persist();
+
+    if (val === '@@@admin') {
+      loadAdminData();
+      showScreen('admin');
+      renderAdmin();
+      return;
+    }
 
     if (state.pairs.length === 0) {
       alert('Nessun dispatch caricato. Controlla il file data/dispatches.json');
       return;
     }
 
+    $('header-user').textContent = state.user;
     showScreen('eval');
     renderPair();
   });
@@ -293,7 +384,6 @@ async function init() {
 
   // Navigation
   $('btn-next').addEventListener('click', () => {
-    // Save current feedback
     const pair = state.pairs[state.currentIndex];
     if (pair && state.votes[pair.id]) {
       state.votes[pair.id].feedback = $('feedback').value.trim();
@@ -332,6 +422,57 @@ async function init() {
     state = { user: '', currentIndex: 0, pairs: state.pairs, votes: {} };
     $('username').value = '';
     showScreen('login');
+  });
+  
+  // Admin events
+  $('btn-admin-logout').addEventListener('click', () => {
+    localStorage.removeItem(APP_KEY);
+    state.user = '';
+    $('username').value = '';
+    showScreen('login');
+  });
+
+  $('btn-admin-import').addEventListener('click', () => $('import-file').click());
+  
+  $('import-file').addEventListener('change', e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(evt) {
+      try {
+        const json = JSON.parse(evt.target.result);
+        if (json.evaluator) {
+          // Check if already imported
+          const exists = adminData.find(d => d.evaluator === json.evaluator && d.timestamp === json.timestamp);
+          if (!exists) {
+            adminData.push(json);
+            saveAdminData();
+            renderAdmin();
+            alert('File importato con successo!');
+          } else {
+            alert('Questo file è già stato importato.');
+          }
+        }
+      } catch(err) {
+        alert('Errore nel parsing del file JSON.');
+      }
+      $('import-file').value = ''; // reset
+    };
+    reader.readAsText(file);
+  });
+  
+  $('btn-admin-export').addEventListener('click', () => {
+    if (adminData.length === 0) {
+      alert('Nessun dato da esportare.');
+      return;
+    }
+    const blob = new Blob([JSON.stringify(adminData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `SCARE_admin_export_${new Date().toISOString().slice(0,10)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
   });
 }
 
