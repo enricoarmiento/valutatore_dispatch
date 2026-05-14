@@ -407,6 +407,16 @@ async function init() {
 
   // Finish/export
   // Finish button was removed
+  // Logout from eval screen
+  $('btn-logout').addEventListener('click', () => {
+    if(confirm("Sei sicuro di voler uscire? I tuoi progressi non salvati andranno persi.")) {
+      localStorage.removeItem(APP_KEY);
+      state = { user: '', currentIndex: 0, pairs: state.pairs, votes: {} };
+      $('username').value = '';
+      showScreen('login');
+    }
+  });
+
   $('btn-download').addEventListener('click', exportResults);
 
   // Restart

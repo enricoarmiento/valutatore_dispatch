@@ -753,6 +753,7 @@ textarea {
 
   .eval-header { padding: 10px 14px; }
   .header-user { display: none; }
+  .hide-mobile { display: none; }
   
   .admin-body { padding: 16px; }
 }
