@@ -279,6 +279,15 @@ input:focus, textarea:focus {
   gap: 8px;
   background: var(--bg-card);
   border-bottom: 1px solid var(--border);
+  align-items: center;
+}
+
+.tabs-label {
+  display: none; /* shown on mobile only */
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  white-space: nowrap;
 }
 
 .tab {
@@ -298,6 +307,10 @@ input:focus, textarea:focus {
   color: var(--accent);
   border-color: var(--accent);
   background: var(--accent-glow);
+}
+
+.vote-divider-mobile {
+  display: none;
 }
 
 /* ---- Dispatch panels ---- */
@@ -704,14 +717,40 @@ textarea {
 
   .login-card { padding: 32px 24px; border: none; box-shadow: none; background: transparent; }
   
+  /* --- Reading tabs: segmented control style --- */
   .mobile-tabs { 
     display: flex; 
     position: sticky;
-    top: 48px; /* Height of the eval-header on mobile roughly */
+    top: 48px;
     z-index: 99;
-    background: var(--bg);
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    background: var(--bg-card);
+    border-bottom: 2px solid var(--accent);
+    padding: 8px 16px;
+    gap: 6px;
+    align-items: center;
   }
+
+  .tabs-label {
+    display: block;
+    margin-right: 4px;
+  }
+
+  .tab {
+    border-radius: 20px;
+    padding: 8px 16px;
+    font-size: 0.82rem;
+    border: 1.5px solid var(--border);
+  }
+
+  .tab.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
+  }
+
+  /* Hide panel header on mobile (tab already tells which version) */
+  .panel-header { display: none; }
 
   .dispatch-container {
     grid-template-columns: 1fr;
@@ -730,14 +769,41 @@ textarea {
     max-height: none; 
     padding: 16px; 
     padding-bottom: 24px;
-    font-size: 0.9rem; /* slightly larger for readability on phones */
+    font-size: 0.9rem;
   }
 
-  .vote-buttons { flex-direction: column; }
-  .btn-vote { padding: 14px; }
+  /* --- Voting: strong visual separation --- */
+  .vote-divider-mobile {
+    display: block;
+    height: 4px;
+    background: linear-gradient(90deg, var(--label-a) 0%, var(--label-b) 100%);
+    border-radius: 2px;
+    margin: 0 auto 16px;
+    width: 60px;
+  }
 
-  .voting-area { padding: 16px; }
-  .voting-area h3 { font-size: 0.9rem; }
+  .voting-area {
+    padding: 20px 16px;
+    background: var(--bg);
+    border-top: 3px solid var(--border);
+  }
+
+  .voting-area h3 { 
+    font-size: 1rem; 
+    margin-bottom: 16px;
+  }
+
+  .vote-buttons { 
+    flex-direction: row; 
+    gap: 12px;
+  }
+
+  .btn-vote { 
+    padding: 16px 12px; 
+    border-radius: 12px;
+    font-size: 0.95rem;
+    border-width: 2.5px;
+  }
 
   .nav-buttons {
     flex-direction: column-reverse;
