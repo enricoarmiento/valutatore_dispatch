@@ -508,3 +508,18 @@ async function init() {
 
 // GO
 init();
+
+/*
+ * iOS Safari scroll lock
+ * CSS overflow:hidden on body is ignored by iOS Safari — the browser
+ * scrolls the viewport regardless. We must prevent touchmove at the
+ * document level and only allow it inside .dispatch-container.
+ */
+document.addEventListener('touchmove', function(e) {
+  const activeScreen = document.querySelector('.screen.active');
+  if (!activeScreen || activeScreen.id !== 'screen-eval') return;
+  // Allow scroll only inside the dispatch container
+  if (!e.target.closest('.dispatch-container')) {
+    e.preventDefault();
+  }
+}, { passive: false });
