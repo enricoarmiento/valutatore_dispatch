@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Valutatore Dispatch Clinici — SCARE Project</title>
   <meta name="description" content="Strumento di valutazione cieca per dispatch clinici OHCA. Progetto SCARE." />
+  <meta name="theme-color" content="#BF5020" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -25,14 +28,14 @@
         <p class="subtitle">SCARE Project — Valutazione cieca di relazioni cliniche OHCA</p>
       </div>
       <form id="login-form">
-        <label for="username">Il tuo nome o identificativo</label>
-        <input type="text" id="username" placeholder="Es: Dr. Rossi" required autocomplete="off" />
-        <button type="submit" class="btn-primary">
+        <label for="username">Il tuo nome o identificativo (opzionale)</label>
+        <input type="text" id="username" placeholder="Es: Dr. Rossi" autocomplete="off" />
+        <button type="submit" class="btn-primary" id="btn-login">
           Inizia la valutazione
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
         </button>
       </form>
-      <p class="hint">Ti verranno mostrate due versioni di ogni dispatch clinico. Dovrai indicare quale preferisci.</p>
+      <p class="hint">Ti verranno mostrate due versioni di ogni dispatch clinico.<br/>Dovrai indicare quale preferisci.<br/><span class="hint-small">Puoi procedere anche senza inserire un nome.</span></p>
     </div>
   </div>
 
@@ -49,32 +52,31 @@
         <span id="progress-text">1 / 5</span>
       </div>
       <div class="header-right">
-        <button class="btn-ghost" id="btn-finish" title="Termina e esporta">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
-          Esporta
+        <button class="btn-ghost" id="btn-logout" title="Esci">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+          <span class="hide-mobile">Esci</span>
         </button>
       </div>
     </header>
 
-    <!-- Progress bar -->
     <div class="progress-bar-container">
       <div class="progress-bar" id="progress-bar" style="width: 0%"></div>
     </div>
 
-    <!-- Patient info banner -->
-    <div class="patient-banner" id="patient-banner">
-      <span id="patient-id">TRAIN_009</span>
-      <span class="separator">•</span>
-      <span id="patient-info">Maschio, 66 anni</span>
+    <!-- Patient info removed -->
+
+    <div class="eval-instructions" style="text-align: center; padding: 12px 20px 0; font-size: 0.85rem; color: var(--text-muted); max-width: 800px; margin: 0 auto;">
+      Leggi entrambe le versioni del dispatch clinico e scegli quale preferisci.<br/>
+      Puoi anche lasciare un feedback o un suggerimento opzionale a fondo pagina.
     </div>
 
     <!-- Mobile tab switcher -->
     <div class="mobile-tabs" id="mobile-tabs">
+      <span class="tabs-label">📖 Leggi:</span>
       <button class="tab active" data-tab="a">Versione A</button>
       <button class="tab" data-tab="b">Versione B</button>
     </div>
 
-    <!-- Dispatch panels -->
     <div class="dispatch-container">
       <div class="dispatch-panel" id="panel-a">
         <div class="panel-header">
@@ -90,29 +92,23 @@
       </div>
     </div>
 
-    <!-- Voting area -->
     <div class="voting-area">
-      <h3>Quale versione preferisci?</h3>
+      <div class="vote-divider-mobile"></div>
+      <h3>✅ Quale versione preferisci?</h3>
       <div class="vote-buttons">
         <button class="btn-vote vote-a" id="vote-a" data-vote="A">
-          <span class="vote-check">✓</span>
+          <span class="vote-icon">A</span>
           Preferisco A
         </button>
-        <button class="btn-vote vote-equal" id="vote-equal" data-vote="equal">
-          <span class="vote-check">≈</span>
-          Equivalenti
-        </button>
         <button class="btn-vote vote-b" id="vote-b" data-vote="B">
-          <span class="vote-check">✓</span>
+          <span class="vote-icon">B</span>
           Preferisco B
         </button>
       </div>
-
       <div class="feedback-area">
         <label for="feedback">Motivazione o suggerimenti (opzionale)</label>
         <textarea id="feedback" rows="3" placeholder="Perché preferisci questa versione? Hai suggerimenti?"></textarea>
       </div>
-
       <div class="nav-buttons">
         <button class="btn-secondary" id="btn-prev" disabled>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
@@ -134,26 +130,92 @@
       </div>
       <h2>Valutazione completata!</h2>
       <p id="results-summary"></p>
-
       <div class="results-table-wrapper">
         <table class="results-table" id="results-table">
-          <thead>
-            <tr>
-              <th>Paziente</th>
-              <th>Preferenza</th>
-              <th>Feedback</th>
-            </tr>
-          </thead>
+          <thead><tr><th>Paziente</th><th>Preferenza</th><th>Feedback</th></tr></thead>
           <tbody id="results-tbody"></tbody>
         </table>
       </div>
-
       <div class="results-actions">
         <button class="btn-primary" id="btn-download">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
           Scarica risultati (JSON)
         </button>
         <button class="btn-secondary" id="btn-restart">Ricomincia</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SCREEN 4: ADMIN DASHBOARD ===== -->
+  <div id="screen-admin" class="screen">
+    <header class="eval-header">
+      <div class="header-left">
+        <span class="header-logo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+        </span>
+        <span class="header-user">Dashboard Admin</span>
+      </div>
+      <div class="header-right">
+        <button class="btn-ghost" id="btn-admin-export">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+          Esporta tutto
+        </button>
+        <button class="btn-ghost" id="btn-admin-import">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+          Importa JSON
+        </button>
+        <input type="file" id="import-file" accept=".json" style="display:none" />
+        <button class="btn-ghost" id="btn-admin-logout">Esci</button>
+      </div>
+    </header>
+
+    <div class="admin-body">
+      <!-- Stats cards -->
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-number" id="stat-evaluators">0</div>
+          <div class="stat-label">Valutatori</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="stat-total-votes">0</div>
+          <div class="stat-label">Voti totali</div>
+        </div>
+        <div class="stat-card stat-card-a">
+          <div class="stat-number" id="stat-pref-a">0</div>
+          <div class="stat-label">Preferenza A</div>
+        </div>
+        <div class="stat-card stat-card-b">
+          <div class="stat-number" id="stat-pref-b">0</div>
+          <div class="stat-label">Preferenza B</div>
+        </div>
+      </div>
+
+      <!-- Per-patient breakdown -->
+      <div class="admin-section">
+        <h3>Preferenze per paziente</h3>
+        <div class="admin-table-wrapper">
+          <table class="admin-table" id="admin-patient-table">
+            <thead><tr><th>Paziente</th><th>A</th><th>B</th><th>% A</th></tr></thead>
+            <tbody id="admin-patient-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Per-evaluator breakdown -->
+      <div class="admin-section">
+        <h3>Dettaglio per valutatore</h3>
+        <div class="admin-table-wrapper">
+          <table class="admin-table" id="admin-evaluator-table">
+            <thead><tr><th>Valutatore</th><th>Data</th><th>Paziente</th><th>Voto</th><th>Feedback</th></tr></thead>
+            <tbody id="admin-evaluator-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Feedback list -->
+      <div class="admin-section">
+        <h3>Tutti i feedback</h3>
+        <div id="admin-feedback-list" class="feedback-list"></div>
       </div>
     </div>
   </div>
