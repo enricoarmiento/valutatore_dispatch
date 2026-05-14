@@ -406,7 +406,7 @@ async function init() {
   });
 
   // Finish/export
-  $('btn-finish').addEventListener('click', showResults);
+  // Finish button was removed
   $('btn-download').addEventListener('click', exportResults);
 
   // Restart
