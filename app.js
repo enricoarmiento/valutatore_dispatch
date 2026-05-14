@@ -36,14 +36,8 @@ function mdToHtml(md) {
     .replace(/^## (.+)$/gm, '<h2>$1</h2>')
     .replace(/^# (.+)$/gm, '<h1>$1</h1>')
     .replace(/^---$/gm, '<hr/>')
-    .replace(/^(\|.+\|)\n(\|[-| :]+\|)\n((?:\|.+\|\n?)+)/gm, (_, header, sep, body) => {
-      const ths = header.split('|').filter(c => c.trim()).map(c => `<th>${c.trim()}</th>`).join('');
-      const rows = body.trim().split('\n').map(row => {
-        const tds = row.split('|').filter(c => c.trim()).map(c => `<td>${c.trim()}</td>`).join('');
-        return `<tr>${tds}</tr>`;
-      }).join('');
-      return `<table><thead><tr>${ths}</tr></thead><tbody>${rows}</tbody></table>`;
-    })
+    .replace(/^(\|.+\|)\n(\|[-| :]+\|)\n((?:\|.+\|\n?)+)/gm, '')
+    .replace(/RELAZIONE DI INTERVENTO - ARRESTO CARDIACO EXTRAOSPEDALIERO \(OHCA\)/gi, '')
     .replace(/\[INCONGRUENZA:\s*(.*?)\s*(?:—\s*Richiede verifica\.)?\s*\]/g,
       '<span class="incongruenza">⚠ INCONGRUENZA: $1</span>')
     .split('\n\n').map(block => {
