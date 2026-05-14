@@ -889,35 +889,38 @@ input::placeholder, textarea::placeholder {
 /* ══════════════════════════════════════════════════
    MOBILE  ≤ 768px
 ══════════════════════════════════════════════════ */
-/* ══════════════════════════════════════════════════
-   MOBILE  ≤ 768px
-══════════════════════════════════════════════════ */
 @media (max-width: 768px) {
   html { font-size: 14px; }
 
-  /* ── ROOT FIX: pin html+body to viewport — prevents page-level scroll ── */
+  /*
+   * ROOT SCROLL FIX
+   * html/body height:100% + overflow:hidden stops page-level scroll.
+   * NO position:fixed on body — that caused screens to overlap and
+   * ID-selector display:flex overrode .screen{display:none}.
+   * Each .screen.active manages its own scroll context.
+   */
   html, body {
     height: 100%;
     overflow: hidden;
-    position: fixed;       /* iOS Safari: prevents rubber-band scroll */
-    width: 100%;
   }
 
-  /* ── iOS zoom fix: inputs must be ≥ 16px to prevent auto-zoom on focus ── */
+  /* All active screens fill the full viewport height */
+  .screen.active {
+    height: 100%;
+  }
+
+  /* ── iOS zoom fix: 16px min prevents Safari auto-zoom on input focus ── */
   input[type="text"], textarea { font-size: 16px; }
 
-  /* ── Login / Results: need their own scroll since body is fixed ── */
-  #screen-login,
-  #screen-results {
-    position: absolute;
-    inset: 0;
+  /* ── Login: center + scroll if content taller than viewport ── */
+  #screen-login.active {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
-    padding: 24px 16px;
-    padding-top: max(24px, env(safe-area-inset-top));
+    padding: max(32px, env(safe-area-inset-top, 32px)) 16px 32px;
+    background: var(--surface-soft);
   }
 
   .login-card {
@@ -927,6 +930,18 @@ input::placeholder, textarea::placeholder {
     background: transparent;
     max-width: 400px;
     width: 100%;
+    flex-shrink: 0;
+  }
+
+  /* ── Results: scroll ── */
+  #screen-results.active {
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: max(24px, env(safe-area-inset-top, 24px)) 16px 32px;
+    background: var(--surface-soft);
   }
 
   .results-card {
@@ -934,33 +949,30 @@ input::placeholder, textarea::placeholder {
     border: none;
     box-shadow: none;
     background: transparent;
-    margin-top: 0;
+    width: 100%;
+    flex-shrink: 0;
   }
   .results-actions { flex-direction: column; }
   .results-actions .btn-primary,
   .results-actions .btn-secondary { width: 100%; }
 
-  /* ── Eval screen: strict full-height column ── */
-  #screen-eval {
-    position: absolute;
-    inset: 0;
-    display: flex;
+  /* ── Eval: strict flex column — header+tabs fixed, content scrolls, voting pinned ── */
+  #screen-eval.active {
     flex-direction: column;
     overflow: hidden;
   }
 
-  /* ── Header: fixed height, safe area top ── */
-  #screen-eval .eval-header {
+  /* Header: no sticky (parent doesn't scroll), safe area top */
+  .eval-header {
     position: relative;
-    top: auto;
     flex-shrink: 0;
-    padding: env(safe-area-inset-top, 0) max(14px, env(safe-area-inset-right)) 0 max(14px, env(safe-area-inset-left));
-    height: calc(52px + env(safe-area-inset-top, 0));
-    align-items: flex-end;
-    padding-bottom: 8px;
+    height: calc(52px + env(safe-area-inset-top, 0px));
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-left:  max(14px, env(safe-area-inset-left, 14px));
+    padding-right: max(14px, env(safe-area-inset-right, 14px));
   }
 
-  #screen-eval .progress-bar-container { flex-shrink: 0; }
+  .progress-bar-container { flex-shrink: 0; }
 
   .eval-instructions {
     flex-shrink: 0;
@@ -970,12 +982,11 @@ input::placeholder, textarea::placeholder {
     color: var(--muted-soft);
   }
 
-  /* ── Tabs: Cal nav-pill-group, flex-shrink: 0 ── */
+  /* ── Tabs: Cal nav-pill-group style ── */
   .mobile-tabs {
     display: flex;
     flex-shrink: 0;
-    position: relative;
-    top: auto;
+    position: relative;   /* override desktop sticky */
     background: var(--surface-soft);
     border: 1px solid var(--hairline);
     border-radius: var(--radius-pill);
@@ -985,9 +996,7 @@ input::placeholder, textarea::placeholder {
     align-items: center;
   }
 
-  .tabs-label {
-    display: none; /* keep clean on mobile */
-  }
+  .tabs-label { display: none; }
 
   .tab {
     flex: 1;
@@ -1004,27 +1013,26 @@ input::placeholder, textarea::placeholder {
     color: var(--ink);
     font-weight: 600;
     border: none;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.10), 0 0 0 1px rgba(0,0,0,0.04);
+    /* pill-in-pill signature shadow */
+    box-shadow: 0 1px 4px rgba(0,0,0,0.10), 0 0 0 1px rgba(0,0,0,0.04);
   }
 
-  /* ── Dispatch container: THE only scrollable area ── */
+  /* ── Dispatch: THE only scrollable zone ── */
   .dispatch-container {
-    display: block;       /* no grid on mobile */
+    display: block;
     flex: 1;
-    min-height: 0;
-    overflow-y: scroll;   /* force scroll, not auto — better iOS momentum */
+    min-height: 0;           /* critical for flex overflow */
+    overflow-y: scroll;      /* scroll > auto for iOS momentum */
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
-    overscroll-behavior: contain;
-    padding: 0;
-    padding-left: env(safe-area-inset-left, 0);
-    padding-right: env(safe-area-inset-right, 0);
+    overscroll-behavior-y: contain;
+    padding: 0 env(safe-area-inset-right, 0) 0 env(safe-area-inset-left, 0);
   }
 
   .dispatch-panel {
     border: none;
     border-radius: 0;
-    display: block;       /* not grid */
+    display: block;
   }
 
   .dispatch-panel.hidden-mobile { display: none; }
@@ -1035,10 +1043,9 @@ input::placeholder, textarea::placeholder {
     padding: 16px 16px 32px;
     font-size: 0.925rem;
     line-height: 1.8;
-    color: var(--body);
   }
 
-  /* ── Voting: pinned bottom, compact ── */
+  /* ── Voting area: pinned bottom ── */
   .vote-divider-mobile {
     display: block;
     height: 2px;
@@ -1051,11 +1058,10 @@ input::placeholder, textarea::placeholder {
 
   .voting-area {
     flex-shrink: 0;
-    padding: 12px 14px;
-    padding-bottom: max(16px, env(safe-area-inset-bottom, 16px));
+    padding: 12px 14px max(16px, env(safe-area-inset-bottom, 16px));
     background: var(--canvas);
     border-top: 1px solid var(--hairline);
-    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.06);
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.06);
   }
 
   .voting-area h3 { font-size: 0.84rem; margin-bottom: 10px; }
@@ -1063,7 +1069,7 @@ input::placeholder, textarea::placeholder {
   .vote-buttons {
     flex-direction: row;
     gap: 8px;
-    margin-bottom: 0; /* no margin — feedback appears below with animation */
+    margin-bottom: 0;
   }
 
   .btn-vote {
@@ -1073,21 +1079,19 @@ input::placeholder, textarea::placeholder {
     border-radius: var(--radius-md);
   }
 
-  /* ── Feedback area: hidden on mobile until vote made ── */
+  /* ── Feedback: hidden until vote, slides in ── */
   .feedback-area {
     max-height: 0;
     overflow: hidden;
     opacity: 0;
-    transition: max-height 0.28s ease, opacity 0.25s ease, margin 0.28s ease;
+    transition: max-height 0.28s ease, opacity 0.22s ease, margin-top 0.28s ease;
     margin-top: 0;
-    margin-bottom: 0;
   }
 
   .feedback-area.visible {
     max-height: 140px;
     opacity: 1;
     margin-top: 10px;
-    margin-bottom: 0;
   }
 
   textarea { min-height: 52px; }
@@ -1101,24 +1105,20 @@ input::placeholder, textarea::placeholder {
   .nav-buttons .btn-secondary { flex: 0 0 auto; padding: 0 14px; }
   .nav-buttons .btn-primary   { flex: 1; margin-top: 0; }
 
-  /* ── Header misc ── */
+  /* ── Misc ── */
   .header-user { display: none; }
   .hide-mobile { display: none; }
 
   /* ── Admin ── */
   .admin-body { padding: 14px; }
-  .stats-row {
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-bottom: 24px;
-  }
-  .stat-card { padding: 16px 12px; }
+  .stats-row  { grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 24px; }
+  .stat-card  { padding: 16px 12px; }
   .stat-number { font-size: 1.65rem; }
 }
 
 /* ── Very small screens ── */
 @media (max-width: 360px) {
   .vote-buttons { gap: 6px; }
-  .btn-vote { font-size: 0.82rem; padding: 10px 8px; }
-  .tab { padding: 7px 12px; }
+  .btn-vote     { font-size: 0.82rem; padding: 10px 8px; }
+  .tab          { padding: 7px 12px; }
 }
