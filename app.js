@@ -105,7 +105,15 @@ function renderPair() {
     : 'Prossimo <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
 
   showMobileTab('a');
+  scrollDispatchTop();
+}
+
+// Reset scroll for both window (desktop) and dispatch-container (mobile flex layout)
+function scrollDispatchTop() {
   window.scrollTo(0, 0);
+  const container = document.querySelector('.dispatch-container');
+  if (container) container.scrollTop = 0;
+  document.querySelectorAll('.dispatch-content').forEach(c => c.scrollTop = 0);
 }
 
 function clearVoteUI() {
@@ -156,6 +164,9 @@ function showMobileTab(tab) {
   });
   $('panel-a').classList.toggle('hidden-mobile', tab !== 'a');
   $('panel-b').classList.toggle('hidden-mobile', tab !== 'b');
+  // Reset scroll on tab switch — user expects to start from top of new version
+  const container = document.querySelector('.dispatch-container');
+  if (container) container.scrollTop = 0;
 }
 
 // ---- Results ----
@@ -373,6 +384,15 @@ async function init() {
       state.votes[pair.id].feedback = $('feedback').value.trim();
       persist();
     }
+  });
+
+  // iOS keyboard handling: when textarea gains focus, ensure it's visible above keyboard.
+  // interactive-widget=resizes-content handles most cases, but a manual scrollIntoView
+  // provides a fallback for older Safari versions.
+  $('feedback').addEventListener('focus', () => {
+    setTimeout(() => {
+      $('feedback').scrollIntoView({ block: 'center', behavior: 'smooth' });
+    }, 300); // wait for keyboard animation
   });
 
   // Navigation
