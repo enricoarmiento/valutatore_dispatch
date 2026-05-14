@@ -700,9 +700,18 @@ textarea {
 @media (max-width: 768px) {
   html { font-size: 14px; }
 
+  body { overflow-x: hidden; }
+
   .login-card { padding: 32px 24px; border: none; box-shadow: none; background: transparent; }
   
-  .mobile-tabs { display: flex; }
+  .mobile-tabs { 
+    display: flex; 
+    position: sticky;
+    top: 48px; /* Height of the eval-header on mobile roughly */
+    z-index: 99;
+    background: var(--bg);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  }
 
   .dispatch-container {
     grid-template-columns: 1fr;
@@ -713,12 +722,16 @@ textarea {
   .dispatch-panel {
     border: none;
     border-radius: 0;
-    border-bottom: 1px solid var(--border);
   }
 
   .dispatch-panel.hidden-mobile { display: none; }
 
-  .dispatch-content { max-height: none; padding-bottom: 32px; }
+  .dispatch-content { 
+    max-height: none; 
+    padding: 16px; 
+    padding-bottom: 24px;
+    font-size: 0.9rem; /* slightly larger for readability on phones */
+  }
 
   .vote-buttons { flex-direction: column; }
   .btn-vote { padding: 14px; }
