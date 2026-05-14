@@ -78,8 +78,7 @@ function renderPair() {
   const pct = ((state.currentIndex) / state.pairs.length) * 100;
   $('progress-bar').style.width = `${pct}%`;
 
-  $('patient-id').textContent = pair.id;
-  $('patient-info').textContent = pair.patient_info || '';
+  // Patient info banner removed
 
   $('content-a').innerHTML = mdToHtml(pair.version_a.content);
   $('content-b').innerHTML = mdToHtml(pair.version_b.content);
