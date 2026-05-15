@@ -20,17 +20,17 @@
   --on-dark-soft: #a1a1aa;
 
   /* ── Green action palette ── */
-  --green-50:  #f0fdf4;
-  --green-100: #dcfce7;
-  --green-200: #bbf7d0;
-  --green-500: #22c55e;
-  --green-600: #16a34a;   /* primary CTA */
-  --green-700: #15803d;   /* hover */
-  --green-800: #166534;   /* active press */
+  --green-50:  #ecfdf5;
+  --green-100: #d1fae5;
+  --green-200: #a7f3d0;
+  --green-500: #34d399;
+  --green-600: #10b981;   /* primary CTA */
+  --green-700: #059669;   /* hover */
+  --green-800: #047857;   /* active press */
 
   /* Primary action = green-600 */
-  --primary:          #16a34a;
-  --primary-active:   #15803d;
+  --primary:          #10b981;
+  --primary-active:   #059669;
   --primary-disabled: #d1fae5;
   --on-primary:       #ffffff;
 
@@ -39,7 +39,7 @@
   --hairline-soft: #f3f4f6;
 
   /* ── Semantic ── */
-  --success: #16a34a;
+  --success: #10b981;
   --warning: #f59e0b;
   --error:   #ef4444;
 
@@ -60,10 +60,10 @@
   --text-dim:     var(--muted-soft);
   --accent:       var(--primary);
   --accent-hover: var(--primary-active);
-  --accent-glow:  rgba(22, 163, 74, 0.12);
+  --accent-glow:  rgba(16, 185, 129, 0.12);
   --accent-light: var(--green-50);
   --green:        var(--success);
-  --green-bg:     rgba(22, 163, 74, 0.08);
+  --green-bg:     rgba(16, 185, 129, 0.08);
   --red:          var(--error);
   --red-bg:       rgba(239, 68, 68, 0.07);
 
@@ -236,7 +236,7 @@ textarea { height: auto; min-height: 64px; resize: vertical; }
 
 input:focus, textarea:focus {
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.12);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.12);
 }
 
 input::placeholder, textarea::placeholder {
@@ -272,7 +272,7 @@ input::placeholder, textarea::placeholder {
 .btn-primary:hover  {
   background: var(--primary-active);
   border-color: var(--primary-active);
-  box-shadow: 0 2px 8px rgba(22,163,74,0.25);
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25);
 }
 .btn-primary:active { background: var(--green-800); border-color: var(--green-800); }
 .btn-primary:disabled {
@@ -778,7 +778,7 @@ input::placeholder, textarea::placeholder {
   background: var(--primary);
   border-color: var(--primary);
   color: var(--on-primary);
-  box-shadow: 0 2px 8px rgba(22, 163, 74, 0.25);
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25);
 }
 .vote-a.active .vote-icon,
 .vote-b.active .vote-icon { background: rgba(255,255,255,0.18); color: #fff; }
@@ -831,7 +831,7 @@ input::placeholder, textarea::placeholder {
 }
 .feedback-area textarea:focus {
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(22,163,74,0.1);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
   outline: none;
 }
 .feedback-area textarea:disabled {
