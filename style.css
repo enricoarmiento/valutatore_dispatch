@@ -956,38 +956,45 @@ input::placeholder, textarea::placeholder {
   .results-actions .btn-primary,
   .results-actions .btn-secondary { width: 100%; }
 
-  /* ── Eval: strict flex column — header+tabs fixed, content scrolls, voting pinned ── */
+  /* ══ EVAL SCREEN: strict flex column ══
+     Structure: [header][progress][tabs][content↕][voting]
+     ONLY .dispatch-container scrolls. Everything else is rigid. */
   #screen-eval.active {
+    display: flex;
     flex-direction: column;
-    overflow: hidden;
+    height: 100%;        /* fill the viewport */
+    overflow: hidden;    /* NO outer scroll ever */
   }
 
   /* Header */
   .eval-header {
+    flex: 0 0 auto;
     position: relative;
-    flex-shrink: 0;
-    z-index: 10;
+    z-index: 20;
     height: calc(52px + env(safe-area-inset-top, 0px));
     padding-top: env(safe-area-inset-top, 0px);
     padding-left:  max(14px, env(safe-area-inset-left, 14px));
     padding-right: max(14px, env(safe-area-inset-right, 14px));
+    background: var(--canvas);
   }
 
-  .progress-bar-container { flex-shrink: 0; z-index: 10; }
+  /* Progress bar */
+  .progress-bar-container {
+    flex: 0 0 2px;
+    z-index: 20;
+  }
 
   /* Hide instructions on mobile */
   .eval-instructions {
     display: none !important;
   }
 
-  /* ── Tabs: Full-width sticky-style to avoid scroll under ── */
+  /* Tabs: pinned strip, never scrolls */
   .mobile-tabs {
+    flex: 0 0 auto;
     display: flex;
-    flex-shrink: 0;
-    position: relative;
-    z-index: 10;
+    z-index: 20;
     background: var(--canvas);
-    margin: 0;
     padding: 8px 14px;
     gap: 6px;
     align-items: center;
@@ -1004,6 +1011,8 @@ input::placeholder, textarea::placeholder {
     font-weight: 500;
     border: 1px solid transparent;
     text-align: center;
+    background: var(--surface-soft);
+    color: var(--muted);
   }
 
   .tab.active {
@@ -1014,18 +1023,16 @@ input::placeholder, textarea::placeholder {
     box-shadow: var(--shadow-xs);
   }
 
-  /* ── Dispatch: scrollable zone ── */
+  /* Content: THE ONLY scrollable zone */
   .dispatch-container {
-    display: block;
-    flex: 1;
-    min-height: 0;
-    position: relative;
-    z-index: 1;
-    overflow-y: scroll;
+    flex: 1 1 0;          /* take all remaining space */
+    min-height: 0;        /* CRITICAL: allows flex child to shrink below content size */
+    overflow-y: scroll;   /* scroll > auto for iOS momentum */
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
     overscroll-behavior-y: contain;
-    padding: 0 env(safe-area-inset-right, 0) 0 env(safe-area-inset-left, 0);
+    display: block;
+    padding: 0;
   }
 
   .dispatch-panel {
