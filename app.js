@@ -372,29 +372,20 @@ async function init() {
     renderPair();
   });
 
-  // Vote buttons
+  // Vote buttons (also handles changing vote by clicking the other panel)
   document.querySelectorAll('.btn-vote').forEach(btn => {
     btn.addEventListener('click', () => {
       const vote = btn.dataset.vote;
-      // Mark panel selection
+      // Clear previous active btn
+      document.querySelectorAll('.btn-vote').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      // Update panel highlight
       updatePanelSelection(vote);
-      // Save
+      // Save & show badge
       saveVote(vote);
-      // Switch UI to voted state
       showVotedState(vote);
-      // Update prev/next buttons
       $('btn-prev').disabled = state.currentIndex === 0;
     });
-  });
-
-  // Change vote
-  $('btn-change').addEventListener('click', () => {
-    // Go back to choose state, keeping panel selection visible
-    clearVoteUI();
-    // Preserve whatever was already voted as panel highlight
-    const pair = state.pairs[state.currentIndex];
-    const existing = pair && state.votes[pair.id];
-    if (existing && existing.vote) updatePanelSelection(existing.vote);
   });
 
   // Help popup
