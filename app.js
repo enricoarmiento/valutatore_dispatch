@@ -87,18 +87,12 @@ function renderPair() {
 
   const existing = state.votes[pair.id];
   clearVoteUI();
-  if (existing) {
-    if (existing.vote) {
-      const btn = $(`vote-${existing.vote.toLowerCase()}`);
-      if (btn) btn.classList.add('active');
-      updatePanelSelection(existing.vote);
-      showFeedbackArea();
-    }
+  if (existing && existing.vote) {
+    updatePanelSelection(existing.vote);
+    showVotedState(existing.vote);
     $('feedback').value = existing.feedback || '';
-    $('btn-next').disabled = false;
   } else {
     $('feedback').value = '';
-    $('btn-next').disabled = true;
   }
 
   $('btn-prev').disabled = state.currentIndex === 0;
@@ -122,11 +116,18 @@ function scrollDispatchTop() {
 function clearVoteUI() {
   document.querySelectorAll('.btn-vote').forEach(b => b.classList.remove('active'));
   document.querySelectorAll('.dispatch-panel').forEach(p => p.classList.remove('selected'));
-  $('feedback-area').classList.remove('visible');
+  // Reset to "choose" state
+  $('vote-state-choose').classList.remove('hidden');
+  $('vote-state-voted').classList.remove('visible');
 }
 
-function showFeedbackArea() {
-  $('feedback-area').classList.add('visible');
+function showVotedState(vote) {
+  // Switch to post-vote state
+  $('vote-state-choose').classList.add('hidden');
+  $('vote-state-voted').classList.add('visible');
+  // Update badge
+  const badge = $('voted-badge');
+  if (badge) badge.textContent = `✅ Hai scelto: Versione ${vote}`;
 }
 
 function updatePanelSelection(vote) {
@@ -340,7 +341,6 @@ async function init() {
     showScreen('admin');
     renderAdmin();
   } else if (state.user && state.pairs.length > 0) {
-    $('header-user').textContent = state.user;
     showScreen('eval');
     renderPair();
   }
@@ -368,7 +368,6 @@ async function init() {
       return;
     }
 
-    $('header-user').textContent = state.user;
     showScreen('eval');
     renderPair();
   });
@@ -376,14 +375,40 @@ async function init() {
   // Vote buttons
   document.querySelectorAll('.btn-vote').forEach(btn => {
     btn.addEventListener('click', () => {
-      clearVoteUI();
-      btn.classList.add('active');
       const vote = btn.dataset.vote;
+      // Mark panel selection
       updatePanelSelection(vote);
+      // Save
       saveVote(vote);
-      $('btn-next').disabled = false;
-      showFeedbackArea();
+      // Switch UI to voted state
+      showVotedState(vote);
+      // Update prev/next buttons
+      $('btn-prev').disabled = state.currentIndex === 0;
     });
+  });
+
+  // Change vote
+  $('btn-change').addEventListener('click', () => {
+    // Go back to choose state, keeping panel selection visible
+    clearVoteUI();
+    // Preserve whatever was already voted as panel highlight
+    const pair = state.pairs[state.currentIndex];
+    const existing = pair && state.votes[pair.id];
+    if (existing && existing.vote) updatePanelSelection(existing.vote);
+  });
+
+  // Help popup
+  $('btn-help').addEventListener('click', () => {
+    $('help-overlay').classList.add('open');
+  });
+  $('help-close').addEventListener('click', () => {
+    $('help-overlay').classList.remove('open');
+  });
+  $('help-cta-ok').addEventListener('click', () => {
+    $('help-overlay').classList.remove('open');
+  });
+  $('help-overlay').addEventListener('click', (e) => {
+    if (e.target === $('help-overlay')) $('help-overlay').classList.remove('open');
   });
 
   // Feedback auto-save
