@@ -830,9 +830,21 @@ input::placeholder, textarea::placeholder {
   transition: border-color 0.15s, box-shadow 0.15s;
 }
 .feedback-area textarea:focus {
-  border-color: var(--ink);
-  box-shadow: 0 0 0 3px rgba(0,0,0,0.06);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(22,163,74,0.1);
   outline: none;
+}
+.feedback-area textarea:disabled {
+  background: var(--surface-soft);
+  color: var(--muted-soft);
+  cursor: not-allowed;
+}
+
+/* ── Locked state: visible but non-interactive before a vote ── */
+#post-vote-extras.locked {
+  opacity: 0.45;
+  pointer-events: none;
+  user-select: none;
 }
 
 /* ── Nav buttons (prev / next) ── */

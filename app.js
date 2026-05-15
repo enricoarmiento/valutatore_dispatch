@@ -118,16 +118,20 @@ function clearVoteUI() {
   document.querySelectorAll('.dispatch-panel').forEach(p => p.classList.remove('selected'));
   const choose = $('vote-state-choose');
   if (choose) choose.classList.remove('hidden');
-  // voted area is always visible — just hide the extras and reset prompt
-  $('post-vote-extras').style.display = 'none';
+  // Lock the extras (visible but non-interactive)
+  $('post-vote-extras').classList.add('locked');
+  $('feedback').disabled = true;
+  $('btn-next').disabled = true;
   $('voted-badge').textContent = 'Scegli la versione che preferisci';
 }
 
 function showVotedState(vote) {
   const choose = $('vote-state-choose');
   if (choose) choose.classList.add('hidden');
-  // reveal extras and update badge
-  $('post-vote-extras').style.display = 'block';
+  // Unlock extras
+  $('post-vote-extras').classList.remove('locked');
+  $('feedback').disabled = false;
+  $('btn-next').disabled = false;
   $('voted-badge').textContent = `✅ Hai scelto: Versione ${vote}`;
 }
 
