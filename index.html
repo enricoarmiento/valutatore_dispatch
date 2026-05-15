@@ -106,12 +106,24 @@
           <span class="panel-label label-a">Versione A</span>
         </div>
         <div class="dispatch-content" id="content-a"></div>
+        <div class="panel-vote-overlay">
+          <button class="btn-vote vote-a" id="vote-a" data-vote="A">
+            <span class="vote-icon">A</span>
+            Preferisco A
+          </button>
+        </div>
       </div>
       <div class="dispatch-panel" id="panel-b">
         <div class="panel-header">
           <span class="panel-label label-b">Versione B</span>
         </div>
         <div class="dispatch-content" id="content-b"></div>
+        <div class="panel-vote-overlay">
+          <button class="btn-vote vote-b" id="vote-b" data-vote="B">
+            <span class="vote-icon">B</span>
+            Preferisco B
+          </button>
+        </div>
       </div>
     </div>
 
@@ -119,20 +131,8 @@
     <div class="voting-area">
       <div class="vote-divider-mobile"></div>
 
-      <!-- STATE 1: Pre-vote — choose -->
-      <div class="vote-state vote-state-choose" id="vote-state-choose">
-        <p class="vote-prompt">Quale versione preferisci?</p>
-        <div class="vote-buttons">
-          <button class="btn-vote vote-a" id="vote-a" data-vote="A">
-            <span class="vote-icon">A</span>
-            Preferisco A
-          </button>
-          <button class="btn-vote vote-b" id="vote-b" data-vote="B">
-            <span class="vote-icon">B</span>
-            Preferisco B
-          </button>
-        </div>
-      </div>
+      <!-- STATE 1: buttons moved inside panels — keep div for JS compat -->
+      <div class="vote-state vote-state-choose" id="vote-state-choose" style="display:none"></div>
 
       <!-- STATE 2: Post-vote — feedback + nav -->
       <div class="vote-state vote-state-voted" id="vote-state-voted">

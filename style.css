@@ -561,12 +561,46 @@ input::placeholder, textarea::placeholder {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  position: relative;            /* anchor for absolute overlay */
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .dispatch-panel.selected {
   border-color: var(--success);
   box-shadow: 0 0 0 1px var(--success), 0 4px 20px rgba(16, 185, 129, 0.15);
+}
+
+/* ── Vote-overlay: floats at the bottom of each panel ── */
+.panel-vote-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 48px 16px 14px;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(255,255,255,0.88) 38%,
+    rgba(255,255,255,0.98) 65%,
+    #fff 100%
+  );
+  border-radius: 0 0 var(--radius) var(--radius);
+  pointer-events: none;          /* let content below be scrollable */
+}
+.panel-vote-overlay .btn-vote {
+  pointer-events: auto;
+  width: 100%;
+  min-height: 42px;
+}
+/* After selection: shade matches the selection highlight */
+.dispatch-panel.selected .panel-vote-overlay {
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(240, 253, 244, 0.9) 38%,
+    rgba(240, 253, 244, 0.99) 65%,
+    #f0fdf4 100%
+  );
 }
 
 .panel-header {
@@ -592,8 +626,8 @@ input::placeholder, textarea::placeholder {
 .dispatch-content {
   flex: 1 1 0;
   min-height: 0;
-  padding: 4px 16px 8px;
-  font-size: 1.05rem;
+  padding: 4px 16px 80px;   /* extra bottom padding so last line clears overlay */
+  font-size: 1.15rem;
   line-height: 1.75;
   overflow-y: auto;
   color: var(--body);
@@ -1471,9 +1505,20 @@ input::placeholder, textarea::placeholder {
 
   .dispatch-content {
     max-height: none;
-    padding: 16px 16px 32px;
-    font-size: 0.925rem;
+    padding: 16px 16px 20px;
+    font-size: 1rem;
     line-height: 1.8;
+  }
+
+  /* On mobile the overlay is NOT absolute — it flows naturally below content */
+  .panel-vote-overlay {
+    position: static;
+    background: var(--canvas);
+    padding: 10px 16px 14px;
+    border-top: 1px solid var(--hairline);
+  }
+  .dispatch-panel.selected .panel-vote-overlay {
+    background: #f0fdf4;
   }
 
   /* ── Voting area: pinned bottom ── */
