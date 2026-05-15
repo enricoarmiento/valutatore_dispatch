@@ -116,18 +116,19 @@ function scrollDispatchTop() {
 function clearVoteUI() {
   document.querySelectorAll('.btn-vote').forEach(b => b.classList.remove('active'));
   document.querySelectorAll('.dispatch-panel').forEach(p => p.classList.remove('selected'));
-  // vote-state-choose is kept in DOM (empty, display:none) for JS compat only
   const choose = $('vote-state-choose');
   if (choose) choose.classList.remove('hidden');
-  $('vote-state-voted').classList.remove('visible');
+  // voted area is always visible — just hide the extras and reset prompt
+  $('post-vote-extras').style.display = 'none';
+  $('voted-badge').textContent = 'Scegli la versione che preferisci';
 }
 
 function showVotedState(vote) {
   const choose = $('vote-state-choose');
   if (choose) choose.classList.add('hidden');
-  $('vote-state-voted').classList.add('visible');
-  const badge = $('voted-badge');
-  if (badge) badge.textContent = `✅ Hai scelto: Versione ${vote}`;
+  // reveal extras and update badge
+  $('post-vote-extras').style.display = 'block';
+  $('voted-badge').textContent = `✅ Hai scelto: Versione ${vote}`;
 }
 
 function updatePanelSelection(vote) {

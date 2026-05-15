@@ -127,35 +127,38 @@
       </div>
     </div>
 
-    <!-- Voting area -->
+    <!-- Voting area: always visible -->
     <div class="voting-area">
       <div class="vote-divider-mobile"></div>
 
-      <!-- STATE 1: buttons moved inside panels — keep div for JS compat -->
+      <!-- keep for JS compat -->
       <div class="vote-state vote-state-choose" id="vote-state-choose" style="display:none"></div>
 
-      <!-- STATE 2: Post-vote — feedback + nav -->
+      <!-- always shown; badge text changes on vote -->
       <div class="vote-state vote-state-voted" id="vote-state-voted">
         <div class="voted-row">
-          <span class="voted-badge" id="voted-badge">Hai scelto: Versione A</span>
+          <span class="voted-badge" id="voted-badge">Scegli la versione che preferisci</span>
         </div>
-        <div class="feedback-area" id="feedback-area">
-          <textarea id="feedback" rows="2" placeholder="Perché hai preferito questa versione? (opzionale)" autocorrect="on" autocapitalize="sentences"></textarea>
-        </div>
-        <div class="nav-buttons">
-          <button class="btn-secondary" id="btn-prev" disabled>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-            Precedente
-          </button>
-          <button class="btn-primary" id="btn-next">
-            Prossimo
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-          </button>
+
+        <!-- shown only after a vote is cast -->
+        <div id="post-vote-extras" style="display:none">
+          <div class="feedback-area" id="feedback-area">
+            <textarea id="feedback" rows="2" placeholder="Perché hai preferito questa versione? (opzionale)" autocorrect="on" autocapitalize="sentences"></textarea>
+          </div>
+          <div class="nav-buttons">
+            <button class="btn-secondary" id="btn-prev" disabled>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+              Precedente
+            </button>
+            <button class="btn-primary" id="btn-next">
+              Prossimo
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </button>
+          </div>
         </div>
       </div>
-
-    </div>
   </div>
+
 
   <!-- ===== SCREEN 3: RESULTS ===== -->
   <div id="screen-results" class="screen">

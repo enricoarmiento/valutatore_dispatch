@@ -702,11 +702,8 @@ input::placeholder, textarea::placeholder {
 /* ── Two states: choose / voted ── */
 .vote-state { width: 100%; }
 
-/* STATE 1: pre-vote */
-.vote-state-choose { display: block; }
-.vote-state-voted  { display: none; }
-
-.vote-state-voted.visible  { display: block; }
+/* Always show the bottom bar; post-vote-extras toggled by JS */
+.vote-state-voted  { display: block; }
 .vote-state-choose.hidden  { display: none; }
 
 .vote-prompt {
