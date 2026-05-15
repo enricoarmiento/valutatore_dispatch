@@ -1,81 +1,88 @@
 /* ============================================================
    Valutatore Dispatch — SCARE Project
-   Design: Cal.com design system — white canvas, near-black CTA,
-           Cal Sans display type (Inter 600 substitute), pill nav
+   Design: Clinical green palette — clean white canvas,
+           forest-green CTAs, Inter typography
    ============================================================ */
 
 :root {
-  /* ── Cal.com surfaces ── */
+  /* ── Surfaces ── */
   --canvas:               #ffffff;
   --surface-soft:         #f8f9fa;
-  --surface-card:         #f5f5f5;
-  --surface-strong:       #e5e7eb;
-  --surface-dark:         #101010;
-  --surface-dark-elevated:#1a1a1a;
+  --surface-card:         #f4f4f5;
+  --surface-strong:       #e4e4e7;
 
-  /* ── Cal.com text ── */
-  --ink:        #111111;
+  /* ── Text ── */
+  --ink:        #1a2e1a;      /* deep forest, not pure black */
   --body:       #374151;
   --muted:      #6b7280;
-  --muted-soft: #898989;
+  --muted-soft: #9ca3af;
   --on-dark:    #ffffff;
   --on-dark-soft: #a1a1aa;
 
-  /* ── Cal.com actions ── */
-  --primary:          #111111;
-  --primary-active:   #242424;
-  --primary-disabled: #e5e7eb;
+  /* ── Green action palette ── */
+  --green-50:  #f0fdf4;
+  --green-100: #dcfce7;
+  --green-200: #bbf7d0;
+  --green-500: #22c55e;
+  --green-600: #16a34a;   /* primary CTA */
+  --green-700: #15803d;   /* hover */
+  --green-800: #166534;   /* active press */
+
+  /* Primary action = green-600 */
+  --primary:          #16a34a;
+  --primary-active:   #15803d;
+  --primary-disabled: #d1fae5;
   --on-primary:       #ffffff;
 
-  /* ── Cal.com hairlines ── */
+  /* ── Hairlines ── */
   --hairline:      #e5e7eb;
   --hairline-soft: #f3f4f6;
 
-  /* ── Cal.com semantic ── */
-  --success: #10b981;
+  /* ── Semantic ── */
+  --success: #16a34a;
   --warning: #f59e0b;
   --error:   #ef4444;
 
-  /* ── Version labels (badge-violet / teal) ── */
+  /* ── Version labels (violet A / teal B — kept distinct for identification) ── */
   --label-a:    #7c3aed;
   --label-a-bg: rgba(124, 58, 237, 0.08);
   --label-b:    #0d9488;
   --label-b-bg: rgba(13, 148, 136, 0.08);
 
-  /* ── App aliases (keep JS/HTML refs working) ── */
-  --bg:          var(--canvas);
-  --bg-card:     var(--canvas);
-  --bg-input:    var(--canvas);
-  --border:      var(--hairline);
-  --border-light:var(--hairline-soft);
-  --text:        var(--ink);
-  --text-muted:  var(--muted);
-  --text-dim:    var(--muted-soft);
-  --accent:      var(--primary);
-  --accent-hover:var(--primary-active);
-  --accent-glow: rgba(0, 0, 0, 0.08);
-  --accent-light:var(--surface-soft);
-  --green:       var(--success);
-  --green-bg:    rgba(16, 185, 129, 0.08);
-  --red:         var(--error);
-  --red-bg:      rgba(239, 68, 68, 0.07);
+  /* ── Aliases ── */
+  --bg:           var(--canvas);
+  --bg-card:      var(--canvas);
+  --bg-input:     var(--canvas);
+  --border:       var(--hairline);
+  --border-light: var(--hairline-soft);
+  --text:         var(--ink);
+  --text-muted:   var(--muted);
+  --text-dim:     var(--muted-soft);
+  --accent:       var(--primary);
+  --accent-hover: var(--primary-active);
+  --accent-glow:  rgba(22, 163, 74, 0.12);
+  --accent-light: var(--green-50);
+  --green:        var(--success);
+  --green-bg:     rgba(22, 163, 74, 0.08);
+  --red:          var(--error);
+  --red-bg:       rgba(239, 68, 68, 0.07);
 
-  /* ── Border radius — Cal.com scale ── */
+  /* ── Radius ── */
   --radius-xs:  4px;
   --radius-sm:  6px;
-  --radius-md:  8px;   /* buttons, inputs */
-  --radius:     12px;  /* cards */
-  --radius-xl:  16px;  /* hero cards */
+  --radius-md:  8px;
+  --radius:     12px;
+  --radius-xl:  16px;
   --radius-pill:9999px;
 
-  /* ── Elevation — Cal.com soft shadows ── */
+  /* ── Shadows ── */
   --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
   --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.06);
   --shadow:    0 4px 12px rgba(0, 0, 0, 0.08);
 
   /* ── Typography ── */
   --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --tracking-display: -0.04em; /* Cal Sans substitute */
+  --tracking-display: -0.03em;
 }
 
 /* ──────────────────────────────────────── reset ── */
@@ -119,9 +126,9 @@ button, .tab {
   cursor: pointer;
 }
 
-/* Keyboard focus ring (only when navigating with Tab) */
+/* Keyboard focus ring */
 :focus-visible {
-  outline: 2px solid var(--ink);
+  outline: 2px solid var(--primary);
   outline-offset: 2px;
   border-radius: var(--radius-md);
 }
@@ -228,8 +235,8 @@ input[type="text"], textarea {
 textarea { height: auto; min-height: 64px; resize: vertical; }
 
 input:focus, textarea:focus {
-  border-color: var(--ink);
-  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.07);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.12);
 }
 
 input::placeholder, textarea::placeholder {
@@ -240,7 +247,7 @@ input::placeholder, textarea::placeholder {
    BUTTONS
 ══════════════════════════════════════════════════ */
 
-/* ── Primary: Cal.com near-black ── */
+/* ── Primary: forest green ── */
 .btn-primary {
   display: inline-flex;
   align-items: center;
@@ -257,13 +264,17 @@ input::placeholder, textarea::placeholder {
   border: 1px solid var(--primary);
   border-radius: var(--radius-md);
   cursor: pointer;
-  transition: background 0.15s, border-color 0.15s;
+  transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
   margin-top: 16px;
   white-space: nowrap;
   line-height: 1;
 }
-.btn-primary:hover  { background: var(--primary-active); border-color: var(--primary-active); }
-.btn-primary:active { background: #000; border-color: #000; }
+.btn-primary:hover  {
+  background: var(--primary-active);
+  border-color: var(--primary-active);
+  box-shadow: 0 2px 8px rgba(22,163,74,0.25);
+}
+.btn-primary:active { background: var(--green-800); border-color: var(--green-800); }
 .btn-primary:disabled {
   background: var(--primary-disabled);
   border-color: var(--primary-disabled);
@@ -272,7 +283,7 @@ input::placeholder, textarea::placeholder {
 }
 .btn-primary svg { width: 16px; height: 16px; flex-shrink: 0; }
 
-/* ── Secondary: white + hairline ── */
+/* ── Secondary: green-tinted ghost ── */
 .btn-secondary {
   display: inline-flex;
   align-items: center;
@@ -281,20 +292,21 @@ input::placeholder, textarea::placeholder {
   height: 40px;
   padding: 0 20px;
   background: var(--canvas);
-  color: var(--ink);
+  color: var(--primary);
   font-family: var(--font);
   font-size: 0.875rem;
   font-weight: 600;
-  border: 1px solid var(--hairline);
+  border: 1px solid var(--primary);
   border-radius: var(--radius-md);
   cursor: pointer;
   transition: background 0.15s, border-color 0.15s;
   white-space: nowrap;
   line-height: 1;
+  opacity: 0.85;
 }
-.btn-secondary:hover  { background: var(--surface-soft); border-color: var(--surface-strong); }
-.btn-secondary:active { background: var(--surface-card); }
-.btn-secondary:disabled { opacity: 0.4; cursor: not-allowed; }
+.btn-secondary:hover  { background: var(--green-50); border-color: var(--primary-active); opacity: 1; }
+.btn-secondary:active { background: var(--green-100); }
+.btn-secondary:disabled { opacity: 0.35; cursor: not-allowed; }
 .btn-secondary svg { width: 15px; height: 15px; flex-shrink: 0; }
 
 /* ── Ghost: text-link style ── */
@@ -407,7 +419,7 @@ input::placeholder, textarea::placeholder {
 .help-step {
   flex-shrink: 0;
   width: 24px; height: 24px;
-  background: var(--ink);
+  background: var(--primary);
   color: #fff;
   font-size: 0.72rem;
   font-weight: 700;
@@ -752,22 +764,24 @@ input::placeholder, textarea::placeholder {
   line-height: 1.4;
 }
 .btn-vote:hover {
-  background: var(--surface-soft);
-  border-color: var(--surface-strong);
-  color: var(--ink);
+  background: var(--green-50);
+  border-color: var(--primary);
+  color: var(--primary);
 }
-.vote-a.active {
+.btn-vote:hover .vote-icon {
+  background: var(--green-100);
+  color: var(--primary);
+}
+/* Both A and B use same forest green when selected */
+.vote-a.active,
+.vote-b.active {
   background: var(--primary);
   border-color: var(--primary);
   color: var(--on-primary);
+  box-shadow: 0 2px 8px rgba(22, 163, 74, 0.25);
 }
-.vote-a.active .vote-icon { background: rgba(255,255,255,0.15); color: #fff; }
-.vote-b.active {
-  background: var(--label-b);
-  border-color: var(--label-b);
-  color: #fff;
-}
-.vote-b.active .vote-icon { background: rgba(255,255,255,0.15); color: #fff; }
+.vote-a.active .vote-icon,
+.vote-b.active .vote-icon { background: rgba(255,255,255,0.18); color: #fff; }
 
 /* ── Post-vote row ── */
 .voted-row {
@@ -1047,64 +1061,6 @@ input::placeholder, textarea::placeholder {
   margin-right: auto;
 }
 
-/* ── Vote buttons: secondary inactive, primary when active ── */
-.btn-vote {
-  flex: 1;
-  min-height: 48px;
-  padding: 12px;
-  font-family: var(--font);
-  font-size: 0.875rem;
-  font-weight: 600;
-  border: 1px solid var(--hairline);
-  border-radius: var(--radius-md);
-  background: var(--canvas);
-  color: var(--muted);
-  cursor: pointer;
-  transition: all 0.15s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 9px;
-}
-
-.vote-icon {
-  font-size: 0.72rem;
-  font-weight: 700;
-  padding: 2px 7px;
-  border-radius: var(--radius-xs);
-  background: var(--surface-card);
-  color: var(--muted);
-  transition: all 0.15s;
-  line-height: 1.4;
-}
-
-.btn-vote:hover {
-  background: var(--surface-soft);
-  border-color: var(--surface-strong);
-  color: var(--ink);
-}
-
-/* Active A: primary black */
-.vote-a.active {
-  background: var(--primary);
-  border-color: var(--primary);
-  color: var(--on-primary);
-}
-.vote-a.active .vote-icon {
-  background: rgba(255,255,255,0.15);
-  color: #fff;
-}
-
-/* Active B: teal */
-.vote-b.active {
-  background: var(--label-b);
-  border-color: var(--label-b);
-  color: #fff;
-}
-.vote-b.active .vote-icon {
-  background: rgba(255,255,255,0.15);
-  color: #fff;
-}
 
 /* Removed override to let the clinical green apply */
 
