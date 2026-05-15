@@ -592,8 +592,8 @@ input::placeholder, textarea::placeholder {
 .dispatch-content {
   flex: 1 1 0;
   min-height: 0;
-  padding: 8px 16px 16px;
-  font-size: 0.875rem;
+  padding: 4px 16px 8px;
+  font-size: 1.05rem;
   line-height: 1.75;
   overflow-y: auto;
   color: var(--body);
@@ -601,6 +601,7 @@ input::placeholder, textarea::placeholder {
 
 .dispatch-content strong { color: var(--ink); font-weight: 600; }
 .dispatch-content p { margin-bottom: 10px; }
+.dispatch-content p:last-child { margin-bottom: 0; }
 
 .dispatch-content h1,
 .dispatch-content h2,
@@ -637,6 +638,8 @@ input::placeholder, textarea::placeholder {
   border-top: 1px solid var(--hairline);
   margin: 12px 0;
 }
+/* Hide the opening horizontal rule auto-generated from the dispatch markdown */
+.dispatch-content > hr:first-child { display: none; }
 .incongruenza {
   display: block;
   margin: 8px 0;
