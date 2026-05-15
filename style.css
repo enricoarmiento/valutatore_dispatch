@@ -969,46 +969,48 @@ input::placeholder, textarea::placeholder {
     overflow: hidden;
   }
 
-  /* Header: no sticky (parent doesn't scroll), safe area top */
+  /* Header */
   .eval-header {
     position: relative;
     flex-shrink: 0;
+    z-index: 10;
     height: calc(52px + env(safe-area-inset-top, 0px));
     padding-top: env(safe-area-inset-top, 0px);
     padding-left:  max(14px, env(safe-area-inset-left, 14px));
     padding-right: max(14px, env(safe-area-inset-right, 14px));
   }
 
-  .progress-bar-container { flex-shrink: 0; }
+  .progress-bar-container { flex-shrink: 0; z-index: 10; }
 
-  /* Hide instructions on mobile — UX is self-explanatory via tabs+vote buttons */
+  /* Hide instructions on mobile */
   .eval-instructions {
-    display: none;
+    display: none !important;
   }
 
-  /* ── Tabs: Cal nav-pill-group style ── */
+  /* ── Tabs: Full-width sticky-style to avoid scroll under ── */
   .mobile-tabs {
     display: flex;
     flex-shrink: 0;
-    position: relative;   /* override desktop sticky */
+    position: relative;
+    z-index: 10;
     background: var(--surface-soft);
-    border: 1px solid var(--hairline);
-    border-radius: var(--radius-pill);
-    margin: 8px 14px;
-    padding: 4px;
-    gap: 2px;
+    border-bottom: 1px solid var(--hairline);
+    margin: 0;
+    padding: 8px 14px;
+    gap: 6px;
     align-items: center;
+    width: 100%;
   }
 
   .tabs-label { display: none; }
 
   .tab {
     flex: 1;
-    border-radius: calc(var(--radius-pill) - 2px);
+    border-radius: var(--radius-md);
     padding: 8px 16px;
     font-size: 0.84rem;
     font-weight: 500;
-    border: none;
+    border: 1px solid transparent;
     text-align: center;
   }
 
@@ -1016,17 +1018,18 @@ input::placeholder, textarea::placeholder {
     background: var(--canvas);
     color: var(--ink);
     font-weight: 600;
-    border: none;
-    /* pill-in-pill signature shadow */
-    box-shadow: 0 1px 4px rgba(0,0,0,0.10), 0 0 0 1px rgba(0,0,0,0.04);
+    border-color: var(--hairline);
+    box-shadow: var(--shadow-xs);
   }
 
-  /* ── Dispatch: THE only scrollable zone ── */
+  /* ── Dispatch: scrollable zone ── */
   .dispatch-container {
     display: block;
     flex: 1;
-    min-height: 0;           /* critical for flex overflow */
-    overflow-y: scroll;      /* scroll > auto for iOS momentum */
+    min-height: 0;
+    position: relative;
+    z-index: 1;
+    overflow-y: scroll;
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
     overscroll-behavior-y: contain;
