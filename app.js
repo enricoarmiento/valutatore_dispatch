@@ -38,6 +38,8 @@ function mdToHtml(md) {
     .replace(/^---$/gm, '<hr/>')
     .replace(/^(\|.+\|)\n(\|[-| :]+\|)\n((?:\|.+\|\n?)+)/gm, '')
     .replace(/RELAZIONE DI INTERVENTO - ARRESTO CARDIACO EXTRAOSPEDALIERO \(OHCA\)/gi, '')
+    .replace(/^Paziente:.*$/gim, '')
+    .replace(/^Data dell'evento:.*$/gim, '')
     .replace(/\[INCONGRUENZA:\s*(.*?)\s*(?:—\s*Richiede verifica\.)?\s*\]/g,
       '<span class="incongruenza">⚠ INCONGRUENZA: $1</span>')
     .split('\n\n').map(block => {
